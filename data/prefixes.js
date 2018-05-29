@@ -1,5 +1,13 @@
 module.exports = {
     list: {
+        // MB: own added prefixes
+        'bot': 'https://w3id.org/bot#',
+        'inst': 'https://mycompanydomain.org/project1/',
+        'product': 'https://w3id.org/product/', // MB: another prefix had the same name but other namespace => switched that one off
+        'props': 'https://w3id.org/props#',
+        'opm': 'https://w3id.org/opm#',
+        'seas': 'https://w3id.org/seas/',
+        //
         'aair': 'http://xmlns.notu.be/aair#',
         'ldr': 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#',
         'aapi': 'http://rdf.alchemyapi.com/rdf/v1/s/aapi-schema#',
@@ -439,7 +447,7 @@ module.exports = {
         'prism': 'http://prismstandard.org/namespaces/basic/2.0/',
         'prissma': 'http://ns.inria.fr/prissma/v1#',
         'prj': 'http://purl.org/stuff/project/',
-        'product': 'http://purl.org/commerce/product#',
+        //'product': 'http://purl.org/commerce/product#',
         'profiling': 'http://ontologi.es/profiling#',
         'prog': 'http://purl.org/prog/',
         'prot': 'http://www.proteinontology.info/po.owl#',
@@ -673,6 +681,7 @@ module.exports = {
         'wv': 'http://vocab.org/waiver/terms/',
         'xbrli': 'http://www.xbrl.org/2003/instance#',
         'xch': 'http://oanda2rdf.appspot.com/xch/',
+        'xds': 'http://www.w3.org/2001/XMLSchema#',
         'xen': 'http://buzzword.org.uk/rdf/xen#',
         'xesam': 'http://freedesktop.org/standards/xesam/1.0/core#',
         'xf': 'http://www.w3.org/2002/xforms/',
@@ -686,6 +695,7 @@ module.exports = {
         'xl': 'http://langegger.at/xlwrap/vocab#',
         'xlink': 'http://www.w3.org/1999/xlink/',
         'xro': 'http://purl.org/xro/ns#',
+        'xs': 'http://www.w3.org/2001/XMLSchema#',
         'xsd': 'http://www.w3.org/2001/XMLSchema#',
         'xsl': 'http://www.w3.org/1999/XSL/Transform#',
         'xt': 'http://purl.org/twc/vocab/cross-topix#',
@@ -1614,7 +1624,7 @@ module.exports = {
         'sakthi': 'http://infotech.nitk.ac.in/research-scholars/sakthi-murugan-r/',
         'san': 'http://www.irit.fr/recherches/MELODI/ontologies/SAN.owl#',
         'saws': 'http://purl.org/saws/ontology#',
-        'seas': 'http://purl.org/NET/seas#',
+        //'seas': 'http://purl.org/NET/seas#', // MB: moved permanently
         'sh': 'http://www.w3.org/ns/shacl#',
         'shoah': 'http://dati.cdec.it/lod/shoah/',
         'soc': 'http://purl.org/net/hdlipcores/ontology/soc#',

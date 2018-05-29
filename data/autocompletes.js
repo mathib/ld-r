@@ -9,8 +9,9 @@ module.exports = {
             {title: 'ldr:AnnotatedResource'},
             {title: 'ldr:Constraint'}
         ],
+        // MB: this is visible when adding a new property from scratch. Commented unnecessary ones for app
         ldrProperties: [
-            {title: 'ldr:config'},
+            /**{title: 'ldr:config'},
             {title: 'ldr:dataset'},
             {title: 'ldr:resource'},
             {title: 'ldr:property'},
@@ -24,8 +25,6 @@ module.exports = {
             {title: 'ldr:host'},
             {title: 'ldr:port'},
             {title: 'ldr:path'},
-            {title: 'ldr:username'},
-            {title: 'ldr:password'},
             {title: 'ldr:annotatedBy'},
             {title: 'ldr:annotations'},
             {title: 'ldr:surfaceForm'},
@@ -97,13 +96,12 @@ module.exports = {
             {title: 'ldr:hasLinkedValue'},
             {title: 'ldr:constraint'},
             {title: 'ldr:restrictAnalysisToSelected'},
-            {title: 'ldr:enabled'}
+            {title: 'ldr:enabled'}**/
         ],
         ldrLiterals: [
             {title: 'OrgResource'},
             {title: 'PersonResource'},
             {title: 'AggregateObject'},
-            {title: 'BasicAggregateView'},
             {title: 'BasicDBpediaView'},
             {title: 'BasicDateTimeView'},
             {title: 'BasicIndividualView'},
@@ -134,8 +132,11 @@ module.exports = {
             {title: 'BarChartBrowser'},
             {title: 'TagCloudBrowser'}
         ],
-        classes: [
-            {title: 'skos:Concept'},
+        classes: [ // MB: visible while adding a class via rdf:type
+            {title: 'bot:Interface'},
+            {title: 'bot:Site'},
+            // hided unnecessary ones
+            /*{title: 'skos:Concept'},
             {title: 'schema:Organization'},
             {title: 'foaf:Document'},
             {title: 'foaf:Person'},
@@ -145,14 +146,29 @@ module.exports = {
             {title: 'vivo:Company'},
             {title: 'bibo:Book'},
             {title: 'void:Dataset'},
-            {title: 'prov:Entity'}
+            {title: 'prov:Entity'}*/
         ],
+        // MB: this is visible when adding a new property from scratch. Order of appearance is same as order here
         properties: [
+            {title: 'bot:hasBuilding'},
+            {title: 'bot:hasStorey'},
+            {title: 'bot:hasSpace'},
+            {title: 'bot:adjacentZone'},
+            {title: 'bot:containsZone'},
+            {title: 'bot:adjacentElement'},
+            {title: 'bot:containsElement'},
+            {title: 'bot:hostsElement'},
+            {title: 'bot:aggregates'},
+            {title: 'props:elevation_simple'},
+            {title: 'props:name_simple'},
+            {title: 'props:number_simple'},
+            {title: 'bot:interfaceOf'}, // MB: not really useful for now as its domain is bot:Interface
+            // MB: existing autocompletes for properties => commented unnecessary ones for app
             {title: 'rdf:type'},
             {title: 'rdfs:label'},
             {title: 'rdfs:comment'},
             {title: 'rdfs:seeAlso'},
-            {title: 'owl:sameAs'},
+            /**{title: 'owl:sameAs'},
             {title: 'geo:geometry'},
             {title: 'skos:prefLabel'},
             {title: 'skos:narrower'},
@@ -163,11 +179,11 @@ module.exports = {
             {title: 'skos:example'},
             {title: 'skos:member'},
             {title: 'skos:note'},
-            {title: 'skos:related'},
+            {title: 'skos:related'},**/
             {title: 'foaf:primaryTopic'},
-            {title: 'foaf:homepage'},
+            //{title: 'foaf:homepage'},
             {title: 'foaf:depiction'},
-            {title: 'foaf:thumbnail'},
+            /**{title: 'foaf:thumbnail'},
             {title: 'foaf:firstName'},
             {title: 'foaf:lastName'},
             {title: 'foaf:name'},
@@ -188,7 +204,7 @@ module.exports = {
             {title: 'dbo:spouse'},
             {title: 'dbo:knownFor'},
             {title: 'dbo:deathDate'},
-            {title: 'dbp:children'}
+            {title: 'dbp:children'}**/
         ]
     }
 }

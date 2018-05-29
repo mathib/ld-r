@@ -1,42 +1,28 @@
-[![Dependency Status](https://david-dm.org/ali1k/ld-r.svg)](https://david-dm.org/ali1k/ld-r)
-[![devDependency Status](https://david-dm.org/ali1k/ld-r/dev-status.svg)](https://david-dm.org/ali1k/ld-r#info=devDependencies)  [![Gitter](https://badges.gitter.im/dev-1pr/1pr.svg)](https://gitter.im/ld-r/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+# Linked Data Reactor (LD-R) application for modeling building topology
+> * LD-R v1.2.3
+> * tested on Windows 10, using Stardog v5.2.1, node v9.11.0 (npm v5.6.0) and webpack v4.6.0
 
-# Linked Data Reactor
+## Installation (detailed information: http://ld-r.org/docs/quickstart.html)
+1) Make sure a recent version of node and webpack is installed. Webpack has to be installed globally
+2) Download or git clone this repository
+git clone https://github.com/mathib/ld-r.git <LocalFolderName>
+3) Move in the folder
+cd <LocalFolderName>
+4) Install the dependencies
+npm install
+5) Make sure a Stardog triplestore is running on localhost:5820, but with security turned off (otherwiser LD-R will not be able to access the database)
+stardog-admin.bat server start --disable-security
+6) Create a new Stardog database with the name 'demo-buildingTopology' and add the BOT (and optionally the PRODUCT) ontology in a named graph of this database: https://raw.githubusercontent.com/w3c-lbd-cg/bot/master/bot.ttl
+stardog-admin db create -n demo-buildingTopology
+stardog data add --named-graph https://w3id.org/myNamedGraph/bot demo-buildingTopology bot.ttl
+7) Start the LD-R application
+npm run dev
+8) Go in a browser to localhost:3000 where you will find the LD-R application
+9) Click on 'Datasets' and add a bot:Site instance (full URI) to start the modeling (bottom of the window). Add property/value directly for the newly created instance: "rdf:type bot:Site" (bottom of the window)
+10) Start the modeling of the building topology by adding BOT relations to new instances. All BOT classes are inferred from the used relations. For convenient modeling, the UI allows the usage of predifined prefixes (data/prefixes.js)
 
-Linked Data Reactor (LD-Reactor or LD-R) is a framework to develop reactive and reusable User Interface components for Linked Data applications. LD-Reactor utilizes Facebook's ReactJS components, Flux architecture and Yahoo!'s Fluxible framework for isomorphic Web applications. It also exploits Semantic-UI framework for flexible UI themes. LD-Reactor aims to apply the idea of component-based application development into RDF data model hence enhancing current user interfaces to view, browse and edit Linked Data.
+## More information on the usage of BOT
+TBA
 
-## Quick Start
-
-### Installation
-
-You should have installed [NodeJS](https://nodejs.org/), [npm](https://github.com/npm/npm) and [Webpack](https://webpack.github.io/) on your system as prerequisite, then:
-
-Clone the repository: `git clone https://github.com/ali1k/ld-r.git`
-
-and simply run `./install` script
-
-### Configuration
-
-Fill in general settings for your application at `configs/general.js`.
-
-Fill in appropriate values for server port, URLs of your SPARQL endpoint and DBpedia lookup service at `configs/server.js`.
-
-Fll in appropriate settings for your UI reactors at `configs/reactor.js`.
-
-Fill in appropriate settings for the faceted browser at `configs/facets.js`.
-
-### Run in Production Mode
-
-`npm run build`
-
-check server at `localhost:4000`
-
-### Development Mode
-
-`npm run dev`
-
-check server at `localhost:3000`
-
-## Documentation
-
-Check out http://ld-r.org for detailed documentation.
+## Live demo
+TBA...
