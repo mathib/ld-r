@@ -16,9 +16,13 @@
 
 `cd <LocalFolderName>`
 
-4) Install the dependencies
+4) Install the dependencies and the configs. If on Windows:
 
-`npm install`
+run the `instal.bat` by double clicking it
+
+If on Unix-based OS, run:
+
+`./install`
 
 5) Make sure a Stardog triplestore is running on localhost:5820, but with security turned off (otherwiser LD-R will not be able to access the database)
 
