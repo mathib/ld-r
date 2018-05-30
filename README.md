@@ -1,5 +1,5 @@
 # Linked Data Reactor (LD-R) application for modeling building topology
-> * LD-R v1.2.3
+> * This application is based on the Linked Data Reactor (LD-R) v1.2.3 published by Dr. Ali Khalili and Prof. Frank van Harmelen of the VU University Amsterdal
 > * tested on Windows 10, using Stardog v5.2.1, node v9.11.0 (npm v5.6.0) and webpack v4.6.0
 
 ## Installation (detailed information: http://ld-r.org/docs/quickstart.html)
@@ -21,8 +21,15 @@ npm run dev
 9) Click on 'Datasets' and add a bot:Site instance (full URI) to start the modeling (bottom of the window). Add property/value directly for the newly created instance: "rdf:type bot:Site" (bottom of the window)
 10) Start the modeling of the building topology by adding BOT relations to new instances. All BOT classes are inferred from the used relations. For convenient modeling, the UI allows the usage of predifined prefixes (data/prefixes.js)
 
+## Modified files from the original LD-R repository
+* configs/general.js
+* configs/reactor.js
+* configs/server.js
+* data/autocompletes.js
+* data/prefixes.js
+
 ## More information on the usage of BOT
-TBA
+* [SPARQL-visualizer demo of how to use BOT](https://w3c-lbd-cg.github.io/bot/?tab=0)
 
 ## Live demo
-TBA...
+TBA

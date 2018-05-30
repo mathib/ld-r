@@ -1,3 +1,5 @@
+// This file was modified from its original version by Mathias Bonduel on 30th of May 2018
+
 module.exports = {
     list: {
         // MB: own added prefixes
