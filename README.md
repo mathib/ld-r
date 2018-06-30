@@ -24,15 +24,16 @@ If on Unix-based OS, run:
 
 `./install`
 
-5) Make sure a Stardog triplestore is running on localhost:5820, but with security turned off (otherwiser LD-R will not be able to access the database)
+5) Make sure a Stardog triplestore is running on localhost:5820, but with security turned off (otherwiser LD-R will not be able to access the database):
 
 `stardog-admin.bat server start --disable-security`
 
-6) Create a new Stardog database with the name 'demo-buildingTopology' and add the [BOT](https://raw.githubusercontent.com/w3c-lbd-cg/bot/master/bot.ttl) (and optionally the PRODUCT) ontology in a named graph of this database: 
+6) Create a new Stardog database with the name 'demo-buildingTopology' and add the [BOT](https://raw.githubusercontent.com/w3c-lbd-cg/bot/master/bot.ttl) (and optionally the [PRODUCT]()) ontology in a named graph of this database. 
+**Note**: the BOT ontology has changed recently at LDAC2018 and some classes/relations are renamed/changed. This app assumes the original BOT version of fall 2017 (after LDAC2017). This version is available in this repo: `Linked Building Data ontologies/bot_v0.2.0_20171027.ttl` 
 
 `stardog-admin db create -n demo-buildingTopology`
 
-`stardog data add --named-graph https://w3id.org/myNamedGraph/bot demo-buildingTopology bot.ttl`
+`stardog data add --named-graph https://w3id.org/myNamedGraph/bot demo-buildingTopology bot_v0.2.0_20171027.ttl`
 
 7) Start the LD-R application
 
@@ -50,10 +51,8 @@ If on Unix-based OS, run:
 * data/prefixes.js
 
 ## More information on the usage of BOT
-* [SPARQL-visualizer demo of how to use BOT](https://w3c-lbd-cg.github.io/bot/?tab=0)
-
-## Live demo
-TBA
+* [draft community report of BOT](https://w3c-lbd-cg.github.io/bot/)
+* [SPARQL-visualizer tutorial](https://w3c-lbd-cg.github.io/bot/tutorial/) of how to use BOT
 
 ## Live demo
 TBA
