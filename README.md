@@ -47,6 +47,7 @@ If on Unix-based OS, run:
 * configs/general.js
 * configs/reactor.js
 * configs/server.js
+* configs/facets.js
 * data/autocompletes.js
 * data/prefixes.js
 
@@ -54,5 +55,6 @@ If on Unix-based OS, run:
 * [draft community report of BOT](https://w3c-lbd-cg.github.io/bot/)
 * [SPARQL-visualizer tutorial](https://w3c-lbd-cg.github.io/bot/tutorial/) of how to use BOT
 
-## Live demo
-TBA
+## Live demo app on Heroku
+This demo app contains the data of the [Duplex IFC house](https://www.nibs.org/page/bsa_commonbimfiles), converted into Linked Building Data using the [IFCtoLBD converter](https://github.com/jyrkioraskari/IFCtoLBD)
+https://lbd-demo.herokuapp.com
