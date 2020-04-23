@@ -35,7 +35,7 @@ If on Unix-based OS, run:
 
 `stardog data add --named-graph https://w3id.org/myNamedGraph/bot demo-buildingTopology bot_v0.2.0_20171027.ttl`
 
-Optionally add some example triples made using BOT (e.g. [`Duplex_A_20110907_exampleData_bot_v0.2.0_20171027.ttl`](https://raw.githubusercontent.com/mathib/ld-r/master/Linked%20Building%20Data%20ontologies/Duplex_A_20110907_exampleData_bot_v0.2.0_20171027.ttl)
+Optionally add some example triples describing a building using BOT, PRODUCT and PROPS (e.g. [`Duplex_A_20110907_exampleData_bot_v0.2.0_20171027.ttl`](https://raw.githubusercontent.com/mathib/ld-r/master/Linked%20Building%20Data%20ontologies/Duplex_A_20110907_exampleData_bot_v0.2.0_20171027.ttl) for the [IFCtoLBD](https://github.com/jyrkioraskari/IFCtoLBD) converted version of the [IFC Duplex House](https://www.nibs.org/page/bsa_commonbimfiles#project1) using BOT v0.0.2)
 
 `stardog data add demo-buildingTopology Duplex_A_20110907_exampleData_bot_v0.2.0_20171027.ttl`
 
@@ -43,9 +43,11 @@ Optionally add some example triples made using BOT (e.g. [`Duplex_A_20110907_exa
 
 `npm run dev`
 
-8) Go in a browser to [localhost:3000](localhost:3000) to find the LD-R application
-9) Click on 'Datasets' (bottom of the page) and add a `bot:Site` instance (enter a full URI to name the new node) to start the modeling. Add property/value directly for the newly created instance: "rdf:type bot:Site" (bottom of the page)
-10) Start the modeling of the building topology by adding BOT relations from the bot:Site instance to new instances. All BOT classes (except bot:Zone) are inferred from the used relations. For convenient modeling, the UI allows the usage of predifined prefixes (data/prefixes.js)
+8) Navigate in a browser to [localhost:3000](localhost:3000) to find the LD-R application running
+9) If you want to add a new `bot:Site` instance to model another building site (or if you didn't load the example dataset), you need to create a new node by adding a triple such as `<http://yourdomaim.org/site1> a bot:Site`.
+You can do this by navigating to in the browser to [this URL](http://localhost:3000/dataset/1/http%3A%2F%2Flocalhost%3A5820%2Fdemo-buildingTopology). At the bottom of the webpage, you can select `Add a New Resource`. A new URI for the node is automatically generated, but the node still has to be made an instance of `bot:Site` instead of `ldr:Resource`.
+Use the button `Add Property/Value` at the end of the page to add new properties to the building site. Autocomplete will help with selecting predefined properties (e.g. `rdfs:comment`), but users can enter any custom property (using prefixed or full URI) they like to use. For convenient modeling, the UI allows the usage of predifined prefixes (data/prefixes.js) such as `bot:` and `inst:` (example namespace for new nodes).
+10) Start the modeling of the building topology by adding BOT topology relations from the `bot:Site` instance to new instances (e.g. `bot:hasBuilding`). All BOT classes (except `bot:Site`) are inferred from the used relations. 
 
 ## Modified files from the original LD-R repository
 * configs/general.js
