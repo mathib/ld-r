@@ -61,7 +61,7 @@ Optionally add some example triples made using BOT (e.g. [`Duplex_A_20110907_exa
 
 ## References
 
-Please cite the following paper when using these configs for BOT in your LD-R app:
+Please cite the following [paper](https://www.researchgate.net/publication/327631664_A_novel_workflow_to_combine_BIM_and_Linked_Data_for_existing_buildings) when using these configs for BOT in your LD-R app:
 
 * Bonduel, M., Rasmussen, M. H., Pauwels, P., Vergauwen, M., & Klein, R. (2018). A novel workflow to combine BIM and Linked Data for existing buildings. In J. Karlshøj & R. J. Scherer (Eds.), *Proceedings of the 12th European Conference on Product and Process Modelling (ECPPM) (pp. 347–354)*. Copenhagen, Denmark: CRC Press.
 
