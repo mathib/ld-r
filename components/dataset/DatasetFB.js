@@ -90,7 +90,7 @@ class DatasetFB extends React.Component {
         //filtering
         let instances = this.props.resources;
         //console.log(instances);
-        if(instances.length && this.state.searchMode){
+        if(instances.length){
             let KEYS_TO_FILTERS = [];
             for(let prop in instances[0]){
                 if(prop !== 'propsForAnalysis' && prop !== 'v' && prop !== 'geo' && prop !== 'd' && prop !== 'image' && prop !== 'accessLevel'){
@@ -119,26 +119,43 @@ class DatasetFB extends React.Component {
         }
         //continue
         let self = this;
+        let createResourceDIV = '';
         let dcnf = this.state.config;
+        let templateResource = '';
+        if(dcnf && !this.props.readOnly && dcnf.allowResourceNew){
+            if(dcnf.templateResource){
+                templateResource = dcnf.templateResource[0];
+            }
+            createResourceDIV =
+            <div className="ui list">
+                <div className="item">
+                    <div  className="medium ui basic icon labeled button" onClick={this.props.onCreateResource.bind(this, this.props.datasetURI, templateResource, true)}>
+                        <i className="cube large blue icon "></i> <i className="add black icon"></i> Add a New Resource
+                    </div>
+                </div>
+                <br/>
+            </div>;
+        }
         if(Object.keys(this.state.config).length === 0){
             dcnf = this.props.config;
         }
         return (
             <div className="ui" ref="datasetFB">
-                <DatasetHeader importedEnvState={this.props.importedEnvState} config={dcnf} total={this.props.total}  datasetURI={this.props.datasetURI} searchMode={this.state.searchMode} resourcesLength={this.props.resourcesLength} hasResources={this.props.resources.length} pivotConstraint={this.props.pivotConstraint} prevEnvState={this.props.prevEnvState} handleBackToPrevPivotState={this.props.handleBackToPrevPivotState}/>
+                <DatasetHeader importedEnvState={this.props.importedEnvState} resourceQuery={this.props.resourceQuery} config={dcnf} total={this.props.total}  datasetURI={this.props.datasetURI} searchMode={this.state.searchMode} resourcesLength={this.props.resourcesLength} hasResources={this.props.resources.length} pivotConstraint={this.props.pivotConstraint} prevEnvState={this.props.prevEnvState} handleBackToPrevPivotState={this.props.handleBackToPrevPivotState}/>
                 <div className="ui segments">
                     <div className="ui segment">
                         <DatasetViewer expanded={this.props.expanded} enableAuthentication={enableAuthentication} cloneable={0} resources={instances} datasetURI={this.props.datasetURI} OpenInNewTab={true} isBig={this.props.isBig} config={dcnf} facetConfigs={facetConfigs} pivotConstraint={this.props.pivotConstraint}/>
                     </div>
-                    {this.state.searchMode ?
-                        <SearchInput placeholder='filter results by a keyword' className="ui fluid search icon input" onChange={this.filterUpdated.bind(this)} throttle={500}/>
-                        : null}
+                    <SearchInput placeholder='filter results by a keyword' className="ui fluid search icon input" onChange={this.filterUpdated.bind(this)} throttle={500}/>
                     <DatasetPager hasResources={instances.length} config={dcnf} enableQuerySaveImport={enableQuerySaveImport} resourceQuery={this.props.resourceQuery} showAllResources={this.props.showAllResources} onShowAllResources={this.props.onShowAllResources} onSearchMode={this.handleSearchMode.bind(this)} selection={this.props.selection} pivotConstraint={this.props.pivotConstraint} onExpandCollapse={this.props.onExpandCollapse} handleClick={this.props.handleClick} datasetURI={this.props.datasetURI} total={this.props.total} threshold={this.props.pagerSize} currentPage={this.props.currentPage} noOfAnalysisProps={this.getNoOfPropsForAnalysis()} handleViewerChange={this.handleViewerChange.bind(this)} handleToggleShowQuery={this.handleToggleShowQuery.bind(this)} handleExport={this.handleExport.bind(this)}/>
                     {dcnf.displayQueries ?
                         <div className= "ui tertiary segment">
                             <YASQEViewer spec={{value: this.props.resourceQuery}} />
                         </div>
                         : ''}
+                </div>
+                <div className= "ui bottom attached">
+                    {createResourceDIV}
                 </div>
             </div>
         );

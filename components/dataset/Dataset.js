@@ -79,12 +79,16 @@ class Dataset extends React.Component {
         let self = this;
         let createResourceDIV = '';
         let dcnf = this.state.config;
+        let templateResource = '';
         if(dcnf && !this.props.readOnly && dcnf.allowResourceNew){
+            if(dcnf.templateResource){
+                templateResource = dcnf.templateResource[0];
+            }
             createResourceDIV =
             <div className="ui list">
                 <div className="item">
-                    <div  className="medium ui basic icon labeled button" onClick={this.props.onCreateResource.bind(this, this.props.datasetURI)}>
-                        <i className="cube square large blue icon "></i> <i className="add black icon"></i> Add a New Resource
+                    <div  className="medium ui basic icon labeled button" onClick={this.props.onCreateResource.bind(this, this.props.datasetURI, templateResource, false)}>
+                        <i className="cube large blue icon "></i> <i className="add black icon"></i> Add a New Resource
                     </div>
                 </div>
                 <br/>
@@ -94,7 +98,7 @@ class Dataset extends React.Component {
             <div className="ui fluid container ldr-padding-more" ref="dataset">
                 <div className="ui grid">
                     <div className="ui column">
-                        <DatasetHeader config={dcnf} total ={this.props.total} datasetURI={this.props.datasetURI} searchMode={this.state.searchMode} resourcesLength={this.props.resources.length}/>
+                        <DatasetHeader config={dcnf} total ={this.props.total} resourceQuery={this.props.resourceQuery} datasetURI={this.props.datasetURI} searchMode={this.state.searchMode} resourcesLength={this.props.resources.length}/>
                         <div className="ui segments">
                             <div className="ui segment">
                                 <DatasetViewer enableAuthentication={enableAuthentication} resources={this.props.resources} datasetURI={this.props.datasetURI} isBig={true} config={dcnf} cloneable={1} onCloneResource={this.props.onCloneResource}/>

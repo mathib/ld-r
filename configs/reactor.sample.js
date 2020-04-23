@@ -50,7 +50,21 @@ export default {
                 allowPropertyNew: 1, // MB: new properties can be added from scratch
                 allowPropertyDelete: 1,
                 maxNumberOfResourcesOnPage: 30,
-            }
+			},
+            'http://ld-r.org/mappings': {
+                readOnly: 0,
+                resourceFocusType: ['https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#CSVMapping'],
+                datasetLabel: ['LD-R Mapping Configurations'],
+                resourceLabelProperty: ['http://www.w3.org/2000/01/rdf-schema#label']
+            },
+            //example reactor config
+            //'http://dbpedia.org/sparql': {
+                // readOnly: 1,
+                // allowInlineConfig: 0,
+                // resourceFocusType: ['http://dbpedia.org/ontology/University'],
+                // resourceLabelProperty: ['http://xmlns.com/foaf/0.1/name'],
+                // datasetLabel: ['DBpedia Universities']
+            //}
         },
         resource: {
             'generic': {
@@ -273,6 +287,17 @@ export default {
                     treatAsResourceType: 1,
                     resourceReactor: ['UserResource']
                 }
+            },
+            'http://ld-r.org/mappings': {
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#CSVMapping' :{
+                    treatAsResourceType: 1,
+                    resourceReactor: ['CSVMappingResource']
+                },
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#CustomMapping' :{
+                    treatAsResourceType: 1,
+                    objectIEditor: ['PrefixBasedInput'],
+                    objectIViewer: ['PrefixBasedView']
+                }
             }
         },
         dataset_property: {
@@ -286,6 +311,11 @@ export default {
                 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type': {
                     isHidden: 0,
                     shortenURI: 0
+                },
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#templateResource': {
+                    label: ['The Template Resource'],
+                    hint: ['If set, this resource will be used as template for new resources.'],
+                    allowNewValue: 0
                 },
                 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#scope': {
                     hint: ['Determines the type of scope in LD-R'],
@@ -445,6 +475,9 @@ export default {
                 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#path': {
                     allowNewValue: 0
                 },
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#protocol': {
+                    allowNewValue: 0
+                },
                 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#graphName': {
                     label: ['Graph Name'],
                     hint: ['use "default" to consider all graph names'],
@@ -461,6 +494,7 @@ export default {
                         {label: 'Virtuoso', value: 'virtuoso'},
                         {label: 'Stardog', value: 'stardog'},
                         {label: 'Blazegraph', value: 'blazegraph'},
+                        {label: 'GraphDB', value: 'graphdb'},
                         {label: 'Sesame', value: 'sesame'}
                     ]
                 }
@@ -640,6 +674,32 @@ export default {
                     allowNewValue: 1,
                     objectIViewer: ['BasicDBpediaView'],
                     objectIEditor: ['DBpediaInput']
+                }
+            },
+            //for mappings
+            'http://ld-r.org/mappings': {
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#csvFile': {
+                    readOnlyProperty: 1,
+                    label: ['CSV File']
+                },
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#skippedColumns': {
+                    allowNewValue: 1,
+                    allowPropertyDelete: 1,
+                    label: ['Skipped Columns'],
+                    hint: ['The selected columns will not be included in the generated RDF file.']
+                },
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#idColumn': {
+                    label: ['ID Column'],
+                    hint: ['A combination of this column and the resource prefix will be used to create URIs for the entities.']
+                },
+                'http://www.w3.org/1999/02/22-rdf-syntax-ns#type': {
+                    readOnlyProperty: 1,
+                    isHidden: 1
+                },
+                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#entityType': {
+                    objectIEditor: ['PrefixBasedInput'],
+                    objectIViewer: ['PrefixBasedView'],
+                    includeOnly: ['classes']
                 }
             }
         },

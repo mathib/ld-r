@@ -1,4 +1,4 @@
-FROM node:8.1
+FROM node:10.15
 MAINTAINER Ali Khalili "hyperir@gmail.com"
 
 # Update aptitude with new repo

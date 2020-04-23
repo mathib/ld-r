@@ -351,11 +351,19 @@ class FacetQuery{
             let st = '?s '+ this.filterPropertyPath(propertyURI) + ' ?v.';
             queryheart = st;
         }
+        //apply other types of filter on facet
+        let facetFilters ='';
+        if(rconfig.facetConfigs && rconfig.facetConfigs[propertyURI] && rconfig.facetConfigs[propertyURI].language){
+            facetFilters = `
+            FILTER(lang(?v)="${rconfig.facetConfigs[propertyURI].language}")
+            `;
+        }
         queryheart = st_extra + ' ' + queryheart;
         this.query = `
         SELECT (count(DISTINCT ?v) AS ?total) WHERE {
             ${gStart}
                 ${queryheart}
+                ${facetFilters}
             ${gEnd}
         }
         `;
@@ -382,6 +390,13 @@ class FacetQuery{
               ${queryheart}
           ${gEnd}
         `;
+        //apply other types of filter on facet
+        let facetFilters ='';
+        if(rconfig.facetConfigs && rconfig.facetConfigs[propertyURI] && rconfig.facetConfigs[propertyURI].language){
+            facetFilters = `
+            FILTER(lang(?v)="${rconfig.facetConfigs[propertyURI].language}")
+            `;
+        }
         //need to change the ?s and ?v to a random variable to not overlap with the new pivot
         let rnd = Math.floor(Date.now() / 1000);
         queryConstraint = queryConstraint.replace(/\?s/g, '?pvs'+rnd);
@@ -393,6 +408,7 @@ class FacetQuery{
         SELECT (count(DISTINCT ?s) AS ?total) ?v WHERE {
           ${gStart}
               ${queryheart}
+              ${facetFilters}
           ${gEnd}
         } GROUP BY ?v ORDER BY DESC(?total) OFFSET ${page*500} LIMIT 500
         `;
@@ -441,6 +457,10 @@ class FacetQuery{
                     rangeDataType = '<' + options.facetConfigs[key].dataType + '>';
                     rangeDataTypeTail = '^^' + '<' + options.facetConfigs[key].dataType + '>';
                 }
+                //add language filters
+                if(options.facetConfigs && options.facetConfigs[key] && options.facetConfigs[key].language){
+                    filters.push('(lang(?v' + i + ')="'+options.facetConfigs[key].language+'")');
+                }
                 //-----------
                 //apply range filters
                 if(tmp.length && options && options.range && options.range[key]){
@@ -478,7 +498,7 @@ class FacetQuery{
                     prevSelection[key].forEach(function(el){
                         tmp.push('"' + el.value + '"');
                     });
-                    if(endpointParameters.type === 'stardog' || endpointParameters.type === 'sesame'){
+                    if(endpointParameters.type === 'stardog' || endpointParameters.type === 'sesame'|| endpointParameters.type === 'neptune'){
                         ///---for sesame
                         tmp2 = [];
                         if(tmp.length && options && options.invert && options.invert[key]){
@@ -674,6 +694,13 @@ class FacetQuery{
             queryheart = st;
         }
         queryheart = st_extra + ' ' + queryheart;
+        //apply other types of filter on facet
+        let facetFilters ='';
+        if(options.facetConfigs && options.facetConfigs[propertyURI] && options.facetConfigs[propertyURI].language){
+            facetFilters = `
+            FILTER(lang(?v)="${options.facetConfigs[propertyURI].language}")
+            `;
+        }
         let queryConstraint = '';
         if(options.facetConfigs && options.facetConfigs[propertyURI] && options.facetConfigs[propertyURI].pivotDataset){
             if(options.facetConfigs[propertyURI]){
@@ -694,6 +721,7 @@ class FacetQuery{
         SELECT (count(DISTINCT ?s) AS ?total) ?v WHERE {
           ${gStart}
               ${queryheart}
+              ${facetFilters}
           ${gEnd}
         } GROUP BY ?v ORDER BY DESC(?total) LIMIT 500
         `;
@@ -705,6 +733,13 @@ class FacetQuery{
         let {gStart, gEnd} = this.prepareGraphName(graphName);
         let st_extra = this.makeExtraTypeFilters(endpointParameters, rconfig);
         let st = this.getMultipleFilters(endpointParameters, graphName, prevSelection, rconfig, options);
+        //apply other types of filter on facet
+        let facetFilters ='';
+        if(options.facetConfigs && options.facetConfigs[propertyURI] && options.facetConfigs[propertyURI].language){
+            facetFilters = `
+            FILTER(lang(?v)="${options.facetConfigs[propertyURI].language}")
+            `;
+        }
         if(this.isMultiGraphFacet(propertyURI)){
             //to support browsing mutiple graphs
             queryheart = this.prepareMultiGraphQuery(endpointParameters, graphName, type, propertyURI, '', st, '');
@@ -717,6 +752,7 @@ class FacetQuery{
         SELECT (count(DISTINCT ?v) AS ?total) WHERE {
             ${gStart}
                 ${queryheart}
+                ${facetFilters}
             ${gEnd}
         }
         `;
@@ -752,18 +788,26 @@ class FacetQuery{
     handleAnalysisProps(options, endpointParameters, graphName, type){
         let self = this;
         let apLabel = '', analysisSelector = '', analysisPhrase = '', analysisPropsList= [], aCounter = 0;
+        let filters =[];
         if(options && options.analysisProps){
             for(let prop in options.analysisProps){
                 aCounter++;
                 apLabel = 'ldr_ap'+aCounter+'_' + self.getPropertyLabel(prop);
                 analysisSelector = analysisSelector + ' ?' + apLabel;
                 analysisPropsList.push(apLabel);
+                //add language filters
+                if(options.facetConfigs && options.facetConfigs[prop] && options.facetConfigs[prop].language){
+                    filters.push('(lang(?' + apLabel + ')="'+options.facetConfigs[prop].language+'")');
+                }
                 if(self.isMultiGraphFacet(prop)){
                     //to support browsing mutiple graphs
                     analysisPhrase = analysisPhrase + self.prepareMultiGraphQuery(endpointParameters, graphName, type, prop, '', '', apLabel);
                 }else{
                     analysisPhrase = analysisPhrase + '?s ' + self.filterPropertyPath(prop) + ' ?' + apLabel + ' .';
                 }
+            }
+            if(filters.length){
+                analysisPhrase = analysisPhrase + 'FILTER('+filters.join(' && ')+')';
             }
         }
         //todo: OPTIONAL for missing values
@@ -791,6 +835,7 @@ class FacetQuery{
         let self = this;
         let {gStart, gEnd} = this.prepareGraphName(graphName);
         let type = rtconfig.type;
+        let languageTag = rtconfig.languageTag;
         let labelProperty = rtconfig.labelProperty;
         let imageProperty = rtconfig.imageProperty;
         let geoProperty = rtconfig.geoProperty;
@@ -822,10 +867,14 @@ class FacetQuery{
             }
         }
         //add labels for entities
+        let langPhrase = '';
+        if(languageTag && languageTag.length){
+            langPhrase = ` FILTER(lang(?title)="${languageTag[0]}")`;
+        }
         if(labelProperty && labelProperty.length){
             selectStr = ' ?title ';
             if(labelProperty.length === 1){
-                titleStr = 'OPTIONAL { ?s ' + self.filterPropertyPath(labelProperty[0]) + ' ?title .} ';
+                titleStr = 'OPTIONAL { ?s ' + self.filterPropertyPath(labelProperty[0]) + ' ?title . '+langPhrase+'} ';
             }else {
                 titleStr = '';
                 let tmpA = [];
@@ -837,7 +886,7 @@ class FacetQuery{
             }
         }else{
             selectStr = ' ?title ';
-            titleStr = 'OPTIONAL { ?s rdfs:label ?title .} OPTIONAL {FILTER langMatches( lang(?title), "EN" )}';
+            titleStr = 'OPTIONAL { ?s rdfs:label ?title . '+langPhrase+'} ';
         }
         if(imageProperty && imageProperty.length){
             selectStr = selectStr + ' ?image ';

@@ -1,4 +1,4 @@
-import {enableDynamicReactorConfiguration, enableDynamicServerConfiguration, enableDynamicFacetsConfiguration, configDatasetURI, enableAutomaticConfiguration, authDatasetURI, enableQuerySaveImport} from '../../configs/general';
+import {enableDynamicReactorConfiguration, enableDynamicServerConfiguration, enableDynamicFacetsConfiguration, configDatasetURI, enableAutomaticConfiguration, authDatasetURI, enableQuerySaveImport, mappingsDatasetURI} from '../../configs/general';
 import {getStaticEndpointParameters, getHTTPQuery, getHTTPGetURL} from '../../services/utils/helpers';
 import rp from 'request-promise';
 const ldr_prefix = 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#';
@@ -194,7 +194,7 @@ class DynamicConfigurator {
                 graphEnd = '';
             }
             const noAuthQuery  = `
-            SELECT DISTINCT ?config ?label ?host ?port ?path ?endpointType ?setting ?settingValue WHERE {
+            SELECT DISTINCT ?config ?label ?host ?port ?path ?protocol ?username ?password ?endpointType ?setting ?settingValue WHERE {
                 ${graph}
                     ?config a ldr:ServerConfig ;
                             ldr:dataset <${datasetURI}> ;
@@ -203,15 +203,18 @@ class DynamicConfigurator {
                             ldr:path ?path ;
                             ldr:endpointType ?endpointType ;
                             ?setting ?settingValue .
+                            OPTIONAL { ?config ldr:protocol ?protocol . }
+                            OPTIONAL { ?config ldr:username ?username . }
+                            OPTIONAL { ?config ldr:password ?password . }
                             OPTIONAL { ?config rdfs:label ?label . }
-                            FILTER (?setting !=rdf:type && ?setting !=ldr:dataset && ?setting !=ldr:host && ?setting !=ldr:port && ?setting !=ldr:path && ?setting !=ldr:endpointType)
+                            FILTER (?setting !=rdf:type && ?setting !=ldr:dataset && ?setting !=ldr:host && ?setting !=ldr:protocol && ?setting !=ldr:port && ?setting !=ldr:path && ?setting !=ldr:endpointType && ?setting !=ldr:username && ?setting !=ldr:password)
                 ${graphEnd}
             }
             `;
             let query;
             if(userSt){
                 query = `
-                SELECT DISTINCT ?config ?label ?host ?port ?path ?endpointType ?setting ?settingValue WHERE {
+                SELECT DISTINCT ?config ?label ?host ?port ?path ?protocol ?username ?password ?endpointType ?setting ?settingValue WHERE {
                     ${graph}
                     {
                         ?config a ldr:ServerConfig ;
@@ -222,8 +225,11 @@ class DynamicConfigurator {
                                 ldr:path ?path ;
                                 ldr:endpointType ?endpointType ;
                                 ?setting ?settingValue .
+                                OPTIONAL { ?config ldr:protocol ?protocol . }
+                                OPTIONAL { ?config ldr:username ?username . }
+                                OPTIONAL { ?config ldr:password ?password . }
                                 OPTIONAL { ?config rdfs:label ?label . }
-                                FILTER (?setting !=rdf:type && ?setting !=ldr:dataset && ?setting !=ldr:host && ?setting !=ldr:port && ?setting !=ldr:path && ?setting !=ldr:endpointType)
+                                FILTER (?setting !=rdf:type && ?setting !=ldr:dataset && ?setting !=ldr:host && ?setting !=ldr:protocol && ?setting !=ldr:port && ?setting !=ldr:path && ?setting !=ldr:endpointType && ?setting !=ldr:username && ?setting !=ldr:password)
                     }
                     UNION
                     {
@@ -234,8 +240,11 @@ class DynamicConfigurator {
                                 ldr:path ?path ;
                                 ldr:endpointType ?endpointType ;
                                 ?setting ?settingValue .
+                                OPTIONAL { ?config ldr:protocol ?protocol . }
+                                OPTIONAL { ?config ldr:username ?username . }
+                                OPTIONAL { ?config ldr:password ?password . }
                                 OPTIONAL { ?config rdfs:label ?label . }
-                                FILTER (?setting !=rdf:type && ?setting !=ldr:dataset && ?setting !=ldr:host && ?setting !=ldr:port && ?setting !=ldr:path && ?setting !=ldr:endpointType)
+                                FILTER (?setting !=rdf:type && ?setting !=ldr:dataset && ?setting !=ldr:host && ?setting !=ldr:protocol && ?setting !=ldr:port && ?setting !=ldr:path && ?setting !=ldr:endpointType && ?setting !=ldr:username && ?setting !=ldr:password)
                                 filter not exists {
                                     ?config ldr:createdBy ?user.
                                 }
@@ -352,7 +361,7 @@ class DynamicConfigurator {
     prepareDynamicFacetsConfig(user, datasetURI, callback) {
         let config = {facets: {}};
         //the following graphs shold be only locally reachable
-        let exceptions = [configDatasetURI[0], authDatasetURI[0]];
+        let exceptions = [configDatasetURI[0], authDatasetURI[0], mappingsDatasetURI[0]];
         //do not config if disabled or exceptions
         if(!enableDynamicFacetsConfiguration || exceptions.indexOf(datasetURI) !== -1){
             callback(config);
@@ -464,7 +473,7 @@ class DynamicConfigurator {
     }
     prepareDynamicDatasetConfig(user, datasetURI, callback) {
         let config = {dataset: {}};
-        let exceptions = [configDatasetURI[0], authDatasetURI[0]];
+        let exceptions = [configDatasetURI[0], authDatasetURI[0], mappingsDatasetURI[0]];
         //do not config if disabled or exceptions
         if(!enableDynamicReactorConfiguration || exceptions.indexOf(datasetURI) !== -1){
             callback(config);
@@ -594,7 +603,7 @@ class DynamicConfigurator {
 
     }
     createASampleReactorConfig(user, scope, datasetURI, resourceURI, propertyURI, options, callback) {
-        let exceptions = [configDatasetURI[0], authDatasetURI[0]];
+        let exceptions = [configDatasetURI[0], authDatasetURI[0], mappingsDatasetURI[0]];
         //do not config if disabled or exceptions
         if(!enableDynamicReactorConfiguration || exceptions.indexOf(datasetURI) !== -1){
             callback(0);
@@ -716,7 +725,7 @@ class DynamicConfigurator {
 
     }
     createASampleServerConfig(user, datasetURI, options, callback) {
-        let exceptions = [configDatasetURI[0], authDatasetURI[0]];
+        let exceptions = [configDatasetURI[0], authDatasetURI[0], mappingsDatasetURI[0]];
         //do not config if disabled or exceptions
         if(!enableDynamicReactorConfiguration || exceptions.indexOf(datasetURI) !== -1){
             callback(0);
@@ -750,6 +759,10 @@ class DynamicConfigurator {
             }
             let date = new Date();
             let currentDate = date.toISOString(); //"2011-12-19T15:28:46.493Z"
+            let protocolSTR = '';
+            if(options.protocol){
+                protocolSTR =` ldr:protocol """${options.protocol}""";`
+            }
             const query = `
             INSERT DATA { ${graph}
                 <${rnc}> a ldr:ServerConfig ;
@@ -758,6 +771,7 @@ class DynamicConfigurator {
                          ldr:host """${options.host}""";
                          ldr:port """${options.port}""";
                          ldr:path """${options.path}""";
+                         ${protocolSTR}
                          ldr:endpointType """${options.endpointType}""";
                          ldr:graphName """${options.graphName}""";
                          ${userSt}
@@ -792,7 +806,9 @@ class DynamicConfigurator {
             }
             let typeFilter = [];
             resourceType.forEach(function(el) {
-                typeFilter.push(`?resource=<${el}>`);
+                if(el){
+                    typeFilter.push(`?resource=<${el}>`);
+                }
             });
             let typeFilterStr = '';
             if(typeFilter.length){
@@ -1293,7 +1309,7 @@ class DynamicConfigurator {
     parseDatasetConfigs(config, datasetURI, body) {
         //list of properties which should be taken into account for access management
         const viewProps = ['hasLimitedAccess', 'readOnly'];
-        const editProps = ['allowResourceClone', 'allowPropertyDelete', 'allowResourceNew', 'allowPropertyNew', 'allowNewValue'];
+        const editProps = ['allowResourceClone', 'allowPropertyDelete', 'allowResourceNew', 'allowPropertyNew', 'allowNewValue', 'allowResourceDelete'];
         let output = config;
         let parsed = JSON.parse(body);
         let settingProp = '';
@@ -1432,6 +1448,7 @@ class DynamicConfigurator {
             }
             output.sparqlEndpoint[datasetURI].port = el.port.value;
             output.sparqlEndpoint[datasetURI].path = el.path.value;
+            output.sparqlEndpoint[datasetURI].protocol = el.protocol && el.protocol.value ? el.protocol.value : 'http';
             output.sparqlEndpoint[datasetURI].endpointType = el.endpointType.value;
             //assume that all values will be stored in an array expect numbers: Not-a-Number
             settingProp = el.setting.value.replace(ldr_prefix, '').trim();
@@ -1509,6 +1526,11 @@ class DynamicConfigurator {
                     }else if(settingProp === 'position' || settingProp === 'isHidden'){
                         dynamicReactorDS.dataset[el.dataset.value][settingProp] = Number(el.settingValue.value);
                     }  else {
+                        //skip the mapping dataset configs
+                        let exceptions =[mappingsDatasetURI[0]]
+                        if(exceptions.indexOf(el.dataset.value) !== -1){
+                            dynamicReactorDS.dataset[el.dataset.value]['isHidden'] = 1;
+                        }
                         //list of relevant datasets attributes should be defined here:
                         let relatedProps = ['resourceFocusType', 'datasetLabel', 'metadata', 'datasetCategory'];
                         if(relatedProps.indexOf(settingProp) !== -1){

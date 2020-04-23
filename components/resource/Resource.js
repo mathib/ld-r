@@ -4,6 +4,7 @@ import PropertyReactor from '../reactors/PropertyReactor';
 import {NavLink} from 'fluxible-router';
 import URIUtil from '../utils/URIUtil';
 import cloneResource from '../../actions/cloneResource';
+import deleteResource from '../../actions/deleteResource';
 
 class Resource extends React.Component {
     constructor(props) {
@@ -22,6 +23,16 @@ class Resource extends React.Component {
             dataset: datasetURI,
             resourceURI: resourceURI
         });
+        e.stopPropagation();
+    }
+    handleDeleteResource(datasetURI, resourceURI, e) {
+        let result = confirm('Are you sure you want to delete this resource?');
+        if (result) {
+            this.context.executeAction(deleteResource, {
+                dataset: datasetURI,
+                resourceURI: resourceURI
+            });
+        }
         e.stopPropagation();
     }
     render() {
@@ -88,17 +99,19 @@ class Resource extends React.Component {
         //categorize properties in different tabs
         if(this.props.config.usePropertyCategories){
             currentCategory = this.props.currentCategory;
+            let sortedCategories = this.props.config.propertyCategories;
+            sortedCategories.sort();
             if(!currentCategory){
-                currentCategory = this.props.config.propertyCategories[0];
+                currentCategory = sortedCategories[0];
             }
-            tabsDIV = this.props.config.propertyCategories.map(function(node, index) {
+            tabsDIV = sortedCategories.map(function(node, index) {
                 return (
                     <NavLink className={(node === currentCategory ? 'item link active' : 'item link')} key={index} routeName="resource" href={'/dataset/' + encodeURIComponent(self.props.datasetURI ) + '/resource/' + encodeURIComponent(self.props.resource) + '/' + node + '/' + encodeURIComponent(self.props.propertyPath)}>
                         {node}
                     </NavLink>
                 );
             });
-            tabsContentDIV = this.props.config.propertyCategories.map(function(node, index) {
+            tabsContentDIV = sortedCategories.map(function(node, index) {
                 return (
                     <div key={index} className={(node === currentCategory ? 'ui bottom attached tab segment active' : 'ui bottom attached tab segment')}>
                         <div className="ui grid">
@@ -151,6 +164,15 @@ class Resource extends React.Component {
         if (self.props.config && !this.props.readOnly && typeof self.props.config.allowResourceClone !== 'undefined' && parseInt(self.props.config.allowResourceClone)) {
             cloneable = 1;
         }
+        //do not allow to delete the template resource
+        let disableDelete = 0;
+        if(self.props.config && typeof self.props.config.templateResource !== 'undefined' && self.props.config.templateResource[0] === self.props.resource){
+            disableDelete = 1;
+        }
+        let deleteable = 0;
+        if (self.props.config && !this.props.readOnly && typeof self.props.config.allowResourceDelete !== 'undefined' && parseInt(self.props.config.allowResourceDelete)) {
+            deleteable = 1;
+        }
         return (
             <div className="ui fluid container ldr-padding-more" ref="resource">
                 <div className="ui grid">
@@ -161,6 +183,10 @@ class Resource extends React.Component {
                             {cloneable ?
                                 <a className="medium ui circular basic icon button" onClick={this.handleCloneResource.bind(this, this.props.datasetURI, decodeURIComponent(this.props.resource))} title="clone this resource"><i className="icon teal superscript"></i></a>
                                 : ''}
+                            {deleteable ?
+                                <a className={'medium ui circular basic icon button' + (disableDelete? ' disabled': '')} onClick={this.handleDeleteResource.bind(this, this.props.datasetURI, decodeURIComponent(this.props.resource))} title={disableDelete ? 'can not delete this resource because it is set as a template resource.' : 'delete this resource'}><i className="icon red trash"></i></a>
+                                : ''}
+
                         </h2>
                         {mainDIV}
                     </div>

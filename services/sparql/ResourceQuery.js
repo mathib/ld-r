@@ -53,6 +53,22 @@ class ResourceQuery{
         `;
         return this.query;
     }
+    deleteResource(endpointParameters, user, graphName, resourceURI) {
+        //todo: consider different value types
+        let {gStart, gEnd} = this.prepareGraphName(graphName);
+        this.query = `
+        DELETE {
+            ${gStart}
+                <${resourceURI}> ?p ?o .
+            ${gEnd}
+        } WHERE {
+            ${gStart}
+                <${resourceURI}> ?p ?o .
+            ${gEnd}
+        }
+        `;
+        return this.query;
+    }
     cloneResource(endpointParameters, user, graphName, resourceURI, newResourceURI) {
         //todo: consider different value types
         let {gStart, gEnd} = this.prepareGraphName(graphName);
@@ -79,7 +95,7 @@ class ResourceQuery{
         `;
         return this.query;
     }
-    newResource(endpointParameters, user, graphName, newResourceURI) {
+    newResource(endpointParameters, user, graphName, newResourceURI, templateResourceURI) {
         //todo: consider different value types
         let {gStart, gEnd} = this.prepareGraphName(graphName);
         let userSt = '';
@@ -88,19 +104,40 @@ class ResourceQuery{
         }
         let date = new Date();
         let currentDate = date.toISOString(); //"2011-12-19T15:28:46.493Z"
-        this.query = `
-        INSERT DATA {
-            ${gStart}
-                <${newResourceURI}> a ldr:Resource ;
-                ldr:createdOn "${currentDate}"^^xsd:dateTime;
-                ${userSt}
-                rdfs:label "New Resource" .
-            ${gEnd}
+        // use a template for resource if set
+        if(templateResourceURI){
+            this.query = `
+            INSERT {
+                ${gStart}
+                    <${newResourceURI}> ?p ?o ;
+                    ${userSt}
+                    ldr:createdOn "${currentDate}"^^xsd:dateTime .
+                ${gEnd}
+            } WHERE {
+                ${gStart}
+                    <${templateResourceURI}> ?p ?o .
+                    FILTER (?p != ldr:cloneOf && ?p != ldr:createdOn && ?p != ldr:createdBy && ?o != ldr:TemplateResource)
+                ${gEnd}
+            }
+            `;
+        } else {
+            // create an empty resource
+            this.query = `
+            INSERT DATA {
+                ${gStart}
+                    <${newResourceURI}> a ldr:Resource ;
+                    ldr:createdOn "${currentDate}"^^xsd:dateTime;
+                    ${userSt}
+                    rdfs:label "New Resource" .
+                ${gEnd}
+            }
+            `;
         }
-        `;
+
+
         return this.query;
     }
-    annotateResource(endpointParameters, user, datasetURI, graphName, resourceURI, propertyURI, annotations, inNewDataset) {
+    annotateResource(endpointParameters, user, datasetURI, graphName, resourceURI, propertyURI, annotations, inNewDataset, options) {
         //todo: consider different value types
         let self = this;
         let {gStart, gEnd} = this.prepareGraphName(graphName);
@@ -118,7 +155,10 @@ class ResourceQuery{
         if(inNewDataset){
             newDSt = `<${resourceURI}> a  ldr:AnnotatedResource .`;
         }
-        let annotatedByURI = self.createDynamicURI(datasetURI, 'dbspotlight'+'_'+Math.floor((Math.random() * 1000) + 1)+'_');
+        let default_api = options && options.api ? options.api : 'dbspotlight';
+        let default_api_name = options && options.api ? options.api : 'DBpedia Spotlight';
+        let annotation_Detail = '';
+        let annotatedByURI = self.createDynamicURI(datasetURI, default_api+'_'+Math.floor((Math.random() * 1000) + 1)+'_');
         annotations.forEach((annotation, index)=>{
             eresource = '<'+self.createDynamicURI(datasetURI, 'annotation_'+index+'_'+Math.floor((Math.random() * 1000) + 1)+'_')+'>';
             aresources.push(eresource);
@@ -135,13 +175,20 @@ class ResourceQuery{
             if(atypes.length){
                 atypeSt = `<${annotation.uri}> a ${atypes.join(',')} .`;
             }
+            if(default_api === 'spotlight'){
+                annotation_Detail = `
+                ldr:offset "${annotation.offset}"^^xsd:integer;
+                ldr:similarityScore "${annotation.similarityScore}"^^xsd:float;
+                ldr:percentageOfSecondRank "${annotation.percentageOfSecondRank}"^^xsd:float;
+              `;
+            }else{
+                annotation_Detail = '';
+            }
             annotationsSTR = annotationsSTR + `
                 ${eresource} a ldr:Annotation;
                              ldr:annotationDetail <${annotatedByURI}> ;
                              ldr:surfaceForm """${annotation.surfaceForm}""";
-                             ldr:offset "${annotation.offset}"^^xsd:integer;
-                             ldr:similarityScore "${annotation.similarityScore}"^^xsd:float;
-                             ldr:percentageOfSecondRank "${annotation.percentageOfSecondRank}"^^xsd:float;
+                             ${annotation_Detail}
                              rdfs:label """${annotation.surfaceForm}""" ;
                              ldr:uri <${annotation.uri}> .
                              ${atypeSt}
@@ -156,7 +203,7 @@ class ResourceQuery{
             ${gStart}
                 <${resourceURI}> ldr:annotatedBy  <${annotatedByURI}> .
                 ${newDSt}
-                <${annotatedByURI}> ${userSt} ldr:createdOn "${currentDate}"^^xsd:dateTime ; ldr:property "${propertyURI}" ; ldr:API "DBpedia Spotlight" .
+                <${annotatedByURI}> ${userSt} ldr:createdOn "${currentDate}"^^xsd:dateTime ; ldr:property "${propertyURI}" ; ldr:API "${default_api_name}" .
                 ${mainAnnSt}
                 ${annotationsSTR}
             ${gEnd}

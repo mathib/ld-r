@@ -23,12 +23,22 @@ export default {
             host: 'localhost', port: 5820, path: '/LD-Rusers', graphName: 'http://ld-r.org/demo/users', endpointType: 'stardog', useReasoning: 1
         },
         // MB: other supported databases: virtuoso, ClioPatria, sesame and blazegraph
+        //Example for connecting to a ClioPatria triple store
+        'http://localhost:3020/sparql/': {
+            host: 'localhost', port: 3020, path: '/sparql/', endpointType: 'ClioPatria'
+        },
+        //Example for connecting to a GraphDB triple store
+        'http://localhost:7200/repositories/test': {
+            host: 'localhost', port: 7200, path: '/repositories/test', endpointType: 'graphdb'
+        }
     },
     dbpediaLookupService: [ // MB: find related DBpedia things from a keyword or prefix search (autocomplete)
         { host: 'lookup.dbpedia.org' }
     ],
+
     dbpediaSpotlightService: [ // MB: find DBpedia instances in text => https://github.com/dbpedia-spotlight/dbpedia-spotlight-model
-        { host: 'model.dbpedia-spotlight.org', port: 80, path: '/en/annotate' }
+        { host: 'api.dbpedia-spotlight.org', port: 80, path: '/en/annotate' }
+
     ],
     //it is used only if you enabled recaptcha feature for user authentication
     //get keys from https://www.google.com/recaptcha

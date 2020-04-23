@@ -1,14 +1,15 @@
 'use strict';
+import {sparqlEndpoint} from '../configs/server';
 import {getHTTPQuery, getHTTPGetURL, prepareDG} from './utils/helpers';
 import {checkViewAccess, checkEditAccess} from './utils/accessManagement';
 import {getDynamicEndpointParameters, createASampleReactorConfig, createASampleFacetsConfig, createASampleServerConfig, createAnEnvState, getSavedQueries} from './utils/dynamicHelpers';
-import {enableLogs, enableAuthentication, authDatasetURI, configDatasetURI} from '../configs/general';
+import {baseResourceDomain, enableLogs, enableAuthentication, authDatasetURI, configDatasetURI} from '../configs/general';
 import ResourceQuery from './sparql/ResourceQuery';
 import ResourceUtil from './utils/ResourceUtil';
 import Configurator from './utils/Configurator';
 import rp from 'request-promise';
 import fs from 'fs';
-import Log from 'log';
+import log4js from 'log4js';
 import async from 'async';
 /*-------------log updates-------------*/
 let log;
@@ -20,7 +21,11 @@ if(enableLogs){
         //create a new file when restarting the server
         logPath = './logs/' + currentDate + '_' + Date.now() + '.log';
     }
-    log = new Log('debug', fs.createWriteStream(logPath));
+    log4js.configure({
+        appenders: { ldr: { type: 'file', filename: logPath } },
+        categories: { default: { appenders: ['ldr'], level: 'info' } }
+    });
+    log = log4js.getLogger('ldr');
 }
 /*-------------config-------------*/
 const outputFormat = 'application/sparql-results+json';
@@ -106,7 +111,7 @@ export default {
                     }).catch(function (err) {
                         console.log(err);
                         if(enableLogs){
-                            log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                            log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                         }
                         callback(null, {datasetURI: datasetURI, graphName: graphName, resourceURI: resourceURI, resourceType: '', title: '', currentCategory: 0, propertyPath: [], properties: [], config: {}});
                     });
@@ -150,7 +155,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {objectURI: objectURI, objectType: '', properties: []});
                 });
@@ -185,7 +190,15 @@ export default {
             }
             getDynamicEndpointParameters(user, datasetURI, (endpointParameters)=>{
                 graphName = endpointParameters.graphName;
-                query = queryObject.getPrefixes() + queryObject.addTriple(endpointParameters, graphName, params.resourceURI, params.propertyURI, params.objectValue, params.valueType, params.dataType);
+                if(params.delimitedBy){
+                    query = queryObject.getPrefixes();
+                    let delTmp = params.objectValue.split(params.delimitedBy);
+                    delTmp.forEach((dval)=>{
+                        query = query + queryObject.addTriple(endpointParameters, graphName, params.resourceURI, params.propertyURI, dval.trim(), params.valueType, params.dataType);
+                    });
+                }else{
+                    query = queryObject.getPrefixes() + queryObject.addTriple(endpointParameters, graphName, params.resourceURI, params.propertyURI, params.objectValue, params.valueType, params.dataType);
+                }
                 //build http uri
                 //send request
                 HTTPQueryObject = getHTTPQuery('update', query, endpointParameters, outputFormat);
@@ -197,7 +210,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
@@ -237,13 +250,12 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
 
             });
-
         } else if (resource === 'resource.clone') {
             datasetURI = params.dataset;
             //control access on authentication
@@ -260,7 +272,7 @@ export default {
             }
             let newResourceURI = datasetURI + '/c' + Math.round(+new Date() / 1000);
             //do not add two slashes
-            if(datasetURI.slice(-1) === '/'){
+            if(datasetURI.slice(-1) === '/' || datasetURI.slice(-1) === '#'){
                 newResourceURI = datasetURI + 'c' + Math.round(+new Date() / 1000);
             }
             getDynamicEndpointParameters(user, datasetURI, (endpointParameters)=>{
@@ -275,7 +287,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {datasetURI: datasetURI, resourceURI: newResourceURI});
                 });
@@ -319,7 +331,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category, datasetURI: datasetURI, resourceURI: params.resourceURI, propertyURI: params.propertyURI, objectValue: params.objectValue});
                 });
@@ -338,14 +350,14 @@ export default {
             }else{
                 user = {accountName: 'open'};
             }
-            let newResourceURI = datasetURI + '/n' + Math.round(+new Date() / 1000);
+            let newResourceURI = baseResourceDomain[0] + '/n' + Math.round(+new Date() / 1000);
             //do not add two slashes
-            if(datasetURI.slice(-1) === '/'){
-                newResourceURI = datasetURI + 'n' + Math.round(+new Date() / 1000);
+            if(baseResourceDomain[0].slice(-1) === '/' || baseResourceDomain[0].slice(-1) === '#'){
+                newResourceURI = baseResourceDomain[0] + 'n' + Math.round(+new Date() / 1000);
             }
             getDynamicEndpointParameters(user, datasetURI, (endpointParameters)=>{
                 graphName = endpointParameters.graphName;
-                query = queryObject.getPrefixes() + queryObject.newResource(endpointParameters, user, graphName, newResourceURI);
+                query = queryObject.getPrefixes() + queryObject.newResource(endpointParameters, user, graphName, newResourceURI, params.templateResource);
                 HTTPQueryObject = getHTTPQuery('update', query, endpointParameters, outputFormat);
                 rp.post({uri: HTTPQueryObject.uri, form: HTTPQueryObject.params}).then(function(res){
                     if(enableLogs){
@@ -355,7 +367,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {datasetURI: datasetURI, resourceURI: newResourceURI});
                 });
@@ -383,7 +395,7 @@ export default {
             }
             getDynamicEndpointParameters(user, targetDataset, (endpointParameters)=>{
                 graphName = endpointParameters.graphName;
-                query = queryObject.getPrefixes() + queryObject.annotateResource(endpointParameters, user, targetDataset, graphName, params.resource, propertyURI, params.annotations, params.inNewDataset);
+                query = queryObject.getPrefixes() + queryObject.annotateResource(endpointParameters, user, targetDataset, graphName, params.resource, propertyURI, params.annotations, params.inNewDataset, {api: params.api});
                 //console.log(query);
                 //build http uri
                 //send request
@@ -396,7 +408,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {datasetURI: targetDataset, resourceURI: params.resource, annotations: params.annotations});
                 });
@@ -409,6 +421,10 @@ export default {
             });
         }else if (resource === 'resource.newServerConfig') {
             datasetURI = params.dataset;
+            // use generic endpointType for new datasets
+            if(sparqlEndpoint['generic'] && sparqlEndpoint['generic'].endpointType){
+                params.options.endpointType = sparqlEndpoint['generic'].endpointType;
+            }
             createASampleServerConfig(req.user, datasetURI, params.options, (res)=>{
                 callback(null, {datasetURI: datasetURI, redirect: params.redirect});
             });
@@ -462,7 +478,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
@@ -511,7 +527,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
@@ -553,7 +569,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
@@ -598,7 +614,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
@@ -638,10 +654,42 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });
+            });
+        } else if (resource === 'resource.delete') {
+            datasetURI = params.dataset;
+            //control access on authentication
+            if(enableAuthentication){
+                if(!req.user){
+                    callback(null, {datasetURI: datasetURI, resourceURI: params.resourceURI});
+                    return 0;
+                }else{
+                    user = req.user;
+                    //todo: think about the access level in the case of clone
+                }
+            }else{
+                user = {accountName: 'open'};
+            }
+            getDynamicEndpointParameters(user, datasetURI, (endpointParameters)=>{
+                graphName = endpointParameters.graphName;
+                query = queryObject.getPrefixes() + queryObject.deleteResource(endpointParameters, user, graphName, params.resourceURI);
+                HTTPQueryObject = getHTTPQuery('update', query, endpointParameters, outputFormat);
+                rp.post({uri: HTTPQueryObject.uri, form: HTTPQueryObject.params}).then(function(res){
+                    if(enableLogs){
+                        log.info('\n User: ' + user.accountName + ' \n Query: \n' + query);
+                    }
+                    callback(null, {datasetURI: datasetURI, resourceURI: params.resourceURI});
+                }).catch(function (err) {
+                    console.log(err);
+                    if(enableLogs){
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                    }
+                    callback(null, {datasetURI: datasetURI, resourceURI: params.resourceURI});
+                });
+
             });
         } else if(resource === 'resource.property') {
             datasetURI = params.dataset;
@@ -678,7 +726,7 @@ export default {
                 }).catch(function (err) {
                     console.log(err);
                     if(enableLogs){
-                        log.error('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
+                        log.info('\n User: ' + user.accountName + '\n Status Code: \n' + err.statusCode + '\n Error Msg: \n' + err.message);
                     }
                     callback(null, {category: params.category});
                 });

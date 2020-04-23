@@ -28,6 +28,16 @@ export default {
             done();
         }
     },
+    importCSV: {
+        path: '/importCSV',
+        method: 'get',
+        handler: require('../components/import/CSVImport'),
+        label: 'CSVImport',
+        action: (context, payload, done) => {
+            context.dispatch('UPDATE_PAGE_TITLE', { pageTitle: appFullTitle + ' | Import CSV files'});
+            done();
+        }
+    },
     newDataset: {
         path: '/newDataset',
         method: 'get',
@@ -130,7 +140,7 @@ export default {
             if (!datasetURI) {
                 datasetURI = 0;
             }
-            context.executeAction(loadResource, { dataset: decodeURIComponent(datasetURI), resource: decodeURIComponent(payload.params.rid), category: category, propertyPath: propertyPath}, done);
+            context.executeAction(loadResource, { dataset: datasetURI, resource: payload.params.rid, category: category, propertyPath: propertyPath}, done);
         }
     },
     user: {
