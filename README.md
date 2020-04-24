@@ -69,12 +69,10 @@ or use the GraphDB workbench to add the data in case of GraphDB triplestore.
 7) Navigate in your browser to [localhost:4000](http://localhost:4000) to find the LD-R app running
 
 ### Closing the app correctly
-8) Close LD-R by pressing CTRL+C in the command line
-9) Close the triplestore correctly
-10) Close Docker Desktop
+Close LD-R by pressing CTRL+C in the command line (both on Mac or Windows). Next, you might also want to close the triplestore and Docker Desktop.
 
-#### Restarting the application later
-11) Restart the container from step 6 (make sure the same triplestore is running as before)
+### Restarting the application later
+Make sure Docker Desktop is running. Restart the container from step 6 (make sure the same triplestore is running as before)
 
 `docker start -i "ld-r-container"`
 
