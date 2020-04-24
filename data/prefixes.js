@@ -1,10 +1,10 @@
-// This file was modified from its original version by Mathias Bonduel on 30th of May 2018
+// This file was modified from its original version by Mathias Bonduel on 23th of April 2020
 
 module.exports = {
     list: {
         // MB: own added prefixes
         'bot': 'https://w3id.org/bot#',
-        'inst': 'https://mycompanydomain.org/project1/',
+        'inst': 'https://mycompanydomain.org/project1/', // example namespace for new individuals
         'product': 'https://w3id.org/product/', // MB: another prefix had the same name but other namespace => switched that one off
         'props': 'https://w3id.org/props#',
         'opm': 'https://w3id.org/opm#',
@@ -682,7 +682,6 @@ module.exports = {
         'wv': 'http://vocab.org/waiver/terms/',
         'xbrli': 'http://www.xbrl.org/2003/instance#',
         'xch': 'http://oanda2rdf.appspot.com/xch/',
-        'xds': 'http://www.w3.org/2001/XMLSchema#',
         'xen': 'http://buzzword.org.uk/rdf/xen#',
         'xesam': 'http://freedesktop.org/standards/xesam/1.0/core#',
         'xf': 'http://www.w3.org/2002/xforms/',
@@ -696,7 +695,6 @@ module.exports = {
         'xl': 'http://langegger.at/xlwrap/vocab#',
         'xlink': 'http://www.w3.org/1999/xlink/',
         'xro': 'http://purl.org/xro/ns#',
-        'xs': 'http://www.w3.org/2001/XMLSchema#',
         'xsd': 'http://www.w3.org/2001/XMLSchema#',
         'xsl': 'http://www.w3.org/1999/XSL/Transform#',
         'xt': 'http://purl.org/twc/vocab/cross-topix#',

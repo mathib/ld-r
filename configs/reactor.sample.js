@@ -39,6 +39,20 @@ export default {
                 datasetLabel: ['LD-R Configurations'],
                 resourceLabelProperty: ['http://www.w3.org/2000/01/rdf-schema#label']
             },
+            'http://ld-r.org/mappings': {
+                readOnly: 0,
+                resourceFocusType: ['https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#CSVMapping'],
+                datasetLabel: ['LD-R Mapping Configurations'],
+                resourceLabelProperty: ['http://www.w3.org/2000/01/rdf-schema#label']
+            },
+            //example reactor config
+            'http://dbpedia.org/sparql': {
+                readOnly: 1,
+                allowInlineConfig: 0,
+                resourceFocusType: ['http://dbpedia.org/ontology/University'],
+                resourceLabelProperty: ['http://xmlns.com/foaf/0.1/name'],
+                datasetLabel: ['DBpedia Universities']
+            },
             //MB
             'http://localhost:5820/demo-buildingTopology': {
                 readOnly: 0,
@@ -50,21 +64,7 @@ export default {
                 allowPropertyNew: 1, // MB: new properties can be added from scratch
                 allowPropertyDelete: 1,
                 maxNumberOfResourcesOnPage: 30,
-			},
-            'http://ld-r.org/mappings': {
-                readOnly: 0,
-                resourceFocusType: ['https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#CSVMapping'],
-                datasetLabel: ['LD-R Mapping Configurations'],
-                resourceLabelProperty: ['http://www.w3.org/2000/01/rdf-schema#label']
-            },
-            //example reactor config
-            //'http://dbpedia.org/sparql': {
-                // readOnly: 1,
-                // allowInlineConfig: 0,
-                // resourceFocusType: ['http://dbpedia.org/ontology/University'],
-                // resourceLabelProperty: ['http://xmlns.com/foaf/0.1/name'],
-                // datasetLabel: ['DBpedia Universities']
-            //}
+            }
         },
         resource: {
             'generic': {
@@ -107,6 +107,12 @@ export default {
                 shortenURI: 0, // MB: shortens URI of object value // MB: dynamic config
                 category: ['General properties'], // MB: default category for all properties
                 allowNewValue: 1, // MB: might be necessary to override on lower levels for dynamic config
+            },
+            'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#password': {
+                label: ['Password'],
+                objectIViewer: ['PasswordView'],
+                objectIEditor: ['PasswordInput'],
+                allowNewValue: 0
             },
             'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#cloneOf': {
                 readOnlyProperty: 1,
@@ -280,14 +286,14 @@ export default {
             },
         },
         //---------depth 2------------
- 
+
         dataset_resource: {
             'http://ld-r.org/users': {
                 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#User': {
                     treatAsResourceType: 1,
                     resourceReactor: ['UserResource']
                 }
-            },
+			},
             'http://ld-r.org/mappings': {
                 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#CSVMapping' :{
                     treatAsResourceType: 1,
@@ -535,13 +541,6 @@ export default {
                 'http://xmlns.com/foaf/0.1/mbox': {
                     label: ['Email Address'],
                     readOnlyProperty: 1
-                },
-                'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#password': {
-                    label: ['Password'],
-                    objectIViewer: ['PasswordView'],
-                    objectIEditor: ['PasswordInput'],
-                    allowNewValue: 0,
-                    allowPropertyDelete: 0,
                 },
                 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#editorOf': {
                     label: ['Editor of Scope'],

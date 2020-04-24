@@ -54,7 +54,7 @@ export default {
     //the path to the upload folder
     uploadFolder: ['./uploaded'],
     //will enable csv imports
-    enableCSVImport: 1,
+    enableCSVImport: 0,
     //graph that stores your mapping configurations for imprting other formats such as CSV
     mappingsDatasetURI: ['http://ld-r.org/mappings']
 };
