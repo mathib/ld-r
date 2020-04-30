@@ -169,6 +169,7 @@ Starting from the building site, you can model the rest of the building topology
 
 ### Properties for building zones and elements: PROPS
 **Note** PROPS is not (yet) documented in an ontology. 
+
 Any resource (e.g. a `bot:Zone` or `bot:Element`) can also get any additional non-topological properties attached using the button `Add Property/Value` at the bottom of the page when focusing on a single resource.
 The PROPS and RDFS properties below make it easier to make a rudimentary building model. Properties from other ontologies can be used, but there will probably be no correct prefix and autocomplete available in LD-R. In addition, LD-R will default to a generic rendering of such external properties.
 
