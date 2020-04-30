@@ -13,7 +13,7 @@ export default {
         //Stardog note: for older versions of Stardog you might need to use a path like '/annex/testDB/sparql/query' to support update queries
 		// MB: main dataset used for modeling a building
         'https://modeling.building.org/mainData': { // never change this line!! (this is used as a reference in other configs)
-            host: 'localhost', // if you don't use Docker Desktop for LD-R, change 'host.docker.internal' into 'localhost'
+            host: 'host.docker.internal', // if you don't use Docker Desktop for LD-R, change 'host.docker.internal' into 'localhost'
             port: 7200, // by default Stardog starts at port 5820 and GraphDB at port 7200
             path: '/repositories/owl2rl_test', // name of the database/repository in the triplestore (stardog: '/databaseName' and GraphDB: '/repositories/repositoryName') /demo-buildingTopology
             graphName: 'default', // should point to the default graph (Stardog: 'default' and GraphDB: 'http://www.openrdf.org/schema/sesame#nil')
@@ -24,7 +24,7 @@ export default {
         },
         // MB: dataset for extending the MDCS taxonomy (MDCS stored in the named graph https://mynamedgraph/mdcs)
         'https://mynamedgraph/mdcs': { // never change this line!! (this is used as a reference in other configs)
-            host: 'localhost', // if you don't use Docker Desktop for LD-R, change 'host.docker.internal' into 'localhost'
+            host: 'host.docker.internal', // if you don't use Docker Desktop for LD-R, change 'host.docker.internal' into 'localhost'
             port: 7200, // by default Stardog starts at port 5820 and GraphDB at port 7200
             path: '/repositories/owl2rl_test', // name of the database/repository in the triplestore (stardog: '/databaseName' and GraphDB: '/repositories/repositoryName') /demo-buildingTopology
             graphName: 'https://mynamedgraph/mdcs', // should point to the default graph (Stardog: 'default' and GraphDB: 'http://www.openrdf.org/schema/sesame#nil')
@@ -35,7 +35,7 @@ export default {
         },
         // MB: dataset for extending the BEO taxonomy (BEO stored in the named graph https://mynamedgraph/beo)
         'https://mynamedgraph/beo': { // never change this line!! (this is used as a reference in other configs)
-            host: 'localhost', // if you don't use Docker Desktop for LD-R, change 'host.docker.internal' into 'localhost'
+            host: 'host.docker.internal', // if you don't use Docker Desktop for LD-R, change 'host.docker.internal' into 'localhost'
             port: 7200, // by default Stardog starts at port 5820 and GraphDB at port 7200
             path: '/repositories/owl2rl_test', // name of the database/repository in the triplestore (stardog: '/databaseName' and GraphDB: '/repositories/repositoryName') /demo-buildingTopology
             graphName: 'https://mynamedgraph/beo', // should point to the default graph (Stardog: 'default' and GraphDB: 'http://www.openrdf.org/schema/sesame#nil')
