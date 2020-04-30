@@ -1,14 +1,24 @@
-// This file was modified from its original version by Mathias Bonduel on 23th of April 2020
+// This file was modified from its original version by Mathias Bonduel on 30th of April 2020
 
 module.exports = {
     list: {
         // MB: own added prefixes
         'bot': 'https://w3id.org/bot#',
-        'inst': 'https://mycompanydomain.org/project1/', // example namespace for new individuals
+        'inst': 'https://mycompanydomain.org/project1/', // MB: example namespace for new individuals
         'product': 'https://w3id.org/product/', // MB: another prefix had the same name but other namespace => switched that one off
-        'props': 'https://w3id.org/props#',
+        'beo': 'http://pi.pauwel.be/voc/buildingelement#', // MB: not dereferenceable but online on https://github.com/pipauwel/product
+        'ext-beo': 'https://w3id.org/beo-extension#', // MB: not dereferenceable => helper for adding type with dropdownlist
+        'props': 'https://w3id.org/props#', // MB: non-existing ontology
         'opm': 'https://w3id.org/opm#',
         'seas': 'https://w3id.org/seas/',
+        'dot': 'https://w3id.org/dot#', 
+        'mdcs': 'https://mdcs.monumentkennis.nl/damageatlas/ontology#', // MB: not dereferenceable but online on ...
+        'ext-mdcs': 'https://w3id.org/mdcs-extension#', // MB: not dereferenceable => helper for adding type with dropdownlist
+        'omg': 'https://w3id.org/omg#',
+        'fog': 'https://w3id.org/fog#',
+        'gom': 'https://w3id.org/gom#',
+        'arp': 'http://www.arpenteur.org/ontology/Arpenteur.owl#',
+        'vann': 'http://purl.org/vocab/vann/',
         //
         'aair': 'http://xmlns.notu.be/aair#',
         'ldr': 'https://github.com/ali1k/ld-reactor/blob/master/vocabulary/index.ttl#',
